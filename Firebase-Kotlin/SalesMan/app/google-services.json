@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "902798798009",
+    "firebase_url": "https://salesman-f8cbf.firebaseio.com",
+    "project_id": "salesman-f8cbf",
+    "storage_bucket": "salesman-f8cbf.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:902798798009:android:fc57e3304e0c4a3b",
+        "android_client_info": {
+          "package_name": "com.muthu.salesmanager"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "902798798009-5idpnbejlck32ed3uovim073fs5q95jp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.muthu.salesmanager",
+            "certificate_hash": "f9f552fdaace47d3f0ee5424d45716f2a8d4653e"
+          }
+        },
+        {
+          "client_id": "902798798009-7m6iv83rpqmc6loj6hm0kkogk6benhav.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC260Y0HJS44M72GpBy2oskmeTe8HRhvuc"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "902798798009-7m6iv83rpqmc6loj6hm0kkogk6benhav.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

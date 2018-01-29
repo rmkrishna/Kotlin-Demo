@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:color="?android:colorAccent"
+    tools:targetApi="lollipop">
+
+    <item>
+        <layer-list>
+
+            <item>
+                <shape>
+                    <solid android:color="@color/card_bg"></solid>
+                </shape>
+            </item>
+
+            <!-- Bottom SHADOW -->
+            <item
+                >
+                <shape>
+                    <solid android:color="#44DFDFDF"></solid>
+                    <corners android:bottomLeftRadius="10dp" android:bottomRightRadius="10dp" android:topRightRadius="10dp"/>
+                </shape>
+            </item>
+            <!--<item-->
+                <!--android:bottom="6dp"-->
+                <!--android:right="4dp">-->
+                <!--<shape>-->
+                    <!--<solid android:color="#22DFDFDF"></solid>-->
+                    <!--<corners android:bottomLeftRadius="10dp" android:bottomRightRadius="10dp" android:topLeftRadius="10dp"/>-->
+                <!--</shape>-->
+            <!--</item>-->
+            <!--Top shadow-->
+            <!--<item-->
+                <!--android:bottom="5dp"-->
+                <!--android:right="5dp">-->
+                <!--<shape>-->
+                    <!--<solid android:color="#88DFDFDF"></solid>-->
+                    <!--<corners android:radius="10dp" />-->
+                <!--</shape>-->
+            <!--</item>-->
+            <item
+                android:bottom="6dp"
+                android:right="4dp"
+                >
+            <!--<item-->
+                <!--android:bottom="5dp"-->
+                <!--android:left="3dp"-->
+                <!--android:right="3dp"-->
+                <!--android:top="5dp">-->
+                <shape>
+                    <corners android:radius="@dimen/btn_corner_radius" />
+                    <solid android:color="@color/white"></solid>
+                    <padding
+                        android:right="10dp"
+                        android:bottom="10dp"/>
+                </shape>
+            </item>
+
+
+        </layer-list>
+    </item>
+
+    <item android:id="@android:id/mask">
+        <shape android:shape="rectangle">
+            <corners android:radius="@dimen/btn_corner_radius" />
+            <solid android:color="?android:colorAccent" />
+        </shape>
+    </item>
+</ripple>

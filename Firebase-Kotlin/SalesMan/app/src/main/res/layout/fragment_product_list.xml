@@ -1,0 +1,33 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    tools:context="com.muthu.salesmanager.ui.fragment.ProductListFragment">
+
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/product_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/main_tv_my_cart"
+        android:layout_alignParentTop="true"
+        android:clipToPadding="false"
+        android:scrollbars="vertical" />
+
+    <TextView
+        android:id="@+id/main_tv_my_cart"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignWithParentIfMissing="true"
+        android:background="@color/white"
+        android:drawableRight="@drawable/ic_shopping_cart"
+        android:gravity="left|fill_vertical"
+        android:minHeight="48dp"
+        android:padding="16dp"
+        android:text="My Cart"
+        android:visibility="gone" />
+
+</RelativeLayout>

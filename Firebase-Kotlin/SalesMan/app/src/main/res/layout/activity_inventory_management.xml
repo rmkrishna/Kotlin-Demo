@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg"
+    android:orientation="vertical"
+    android:padding="10dp"
+    tools:context="com.muthu.salesmanager.ui.activity.InventoryManagementActivity">
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/card_bg"
+        android:minHeight="100dp"
+        app:cardBackgroundColor="@color/card_bg"
+        card_view:cardCornerRadius="3dp"
+        card_view:cardElevation="6dp"
+        card_view:cardUseCompatPadding="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="12dp">
+
+            <TextView
+                style="@style/Title_Style"
+                android:text="CREATE" />
+
+            <Button
+                android:id="@+id/inventory_btn__add_new_category"
+                style="@style/Button_Style"
+                android:layout_marginTop="5dp"
+                android:text="Add new category"
+                android:theme="@style/MButton" />
+
+            <Button
+                android:id="@+id/inventory_btn__add_new_sub_category"
+                style="@style/Button_Style"
+                android:layout_marginTop="10dp"
+                android:text="Add new sub category"
+                android:theme="@style/MButton" />
+
+            <Button
+                android:id="@+id/inventory_btn__add_new_product"
+                style="@style/Button_Style"
+                android:layout_marginTop="10dp"
+                android:text="Add new product"
+                android:theme="@style/MButton" />
+
+            <ImageView style="@style/Dot_Line_Style" />
+
+            <TextView
+                style="@style/Title_Style"
+                android:text="READ/UPDATE" />
+
+            <Button
+                android:id="@+id/inventory_btn__edit_product"
+                style="@style/Button_Style"
+                android:text="Edit product"
+                android:theme="@style/MButton" />
+
+            <ImageView style="@style/Dot_Line_Style" />
+
+            <TextView
+                style="@style/Title_Style"
+                android:text="ORDERS" />
+
+            <Button
+                android:id="@+id/inventory_btn__view_order"
+                style="@style/Button_Style"
+                android:text="View all orders"
+                android:theme="@style/MButton" />
+
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+
+</ScrollView>

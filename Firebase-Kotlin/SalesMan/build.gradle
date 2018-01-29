@@ -1,0 +1,91 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+buildscript {
+    ext.kotlin_version = '1.2.20'
+    repositories {
+        google()
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.0.1'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+        classpath 'com.google.gms:google-services:3.1.2'
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        jcenter()
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
+
+ext {
+    // sdk and tools
+    versions = [
+            versionCode      : 1,
+            versionName      : "0.1-debug",
+            compileSdkVersion: 27,
+            targetSdkVersion : 27,
+            minSdkVersion    : 21,
+            buildToolsVersion: "27.0.2"
+    ]
+
+    // dependencies versions
+    supportLibraryVersion = '27.0.2'
+    playServicesVersion = '11.8.0'
+    constraintVersion = '1.0.2'
+    archRoomVersion  = "1.0.0"
+    retrofit2Version = '2.3.0'
+    okhttpLogger = '3.5.0'
+    glideVersion = '4.4.0'
+    hdodenhofVersion = '2.1.0'
+    socketIOVersion = '0.3.0'
+    daggerVersion = '2.11'
+    lifecycleVersion = hasProperty("ARCH_VERSION") ? getProperty("ARCH_VERSION") : "1.0.0"
+    pagingVersion = '1.0.0-alpha4-1'
+    autoplayvideosVersion = '0.2.0'
+    easyvideoplayerVersion = '0.3.0'
+
+
+    //Support Libraries dependencies
+    supportDependencies = [
+            design           : "com.android.support:design:${supportLibraryVersion}",
+            recyclerView     : "com.android.support:recyclerview-v7:${supportLibraryVersion}",
+            cardView         : "com.android.support:cardview-v7:${supportLibraryVersion}",
+            appCompat        : "com.android.support:appcompat-v7:${supportLibraryVersion}",
+            map              : "com.google.android.gms:play-services-maps:${playServicesVersion}",
+            location         : "com.google.android.gms:play-services-location:${playServicesVersion}",
+            supportAnnotation: "com.android.support:support-annotations:${supportLibraryVersion}",
+            constraint       : "com.android.support.constraint:constraint-layout:${constraintVersion}"
+//            retrofit        : "com.squareup.retrofit2:retrofit:${retrofit2Version}",
+//            retrofitConverterGson   : "com.squareup.retrofit2:converter-gson:${retrofit2Version}",
+//            retrofitLoggingInterceptor : "com.squareup.okhttp3:logging-interceptor:${okhttpLogger}",
+//            room: "android.arch.persistence.room:runtime:${archRoomVersion}",
+//            roomAnnotation: "android.arch.persistence.room:compiler:${archRoomVersion}",
+//            glide       : "com.github.bumptech.glide:glide:${glideVersion}",
+//            glideAnnotation : "com.github.bumptech.glide:compiler:${glideVersion}",
+//            hdodenhofCircleImage : "de.hdodenhof:circleimageview:${hdodenhofVersion}",
+//            socketIO : "com.github.nkzawa:socket.io-client:${socketIOVersion}",
+//            daggerRuntime : "com.google.dagger:dagger:${daggerVersion}",
+//            daggerAndroid : "com.google.dagger:dagger-android:${daggerVersion}",
+//            daggerAndroidSupport : "com.google.dagger:dagger-android-support:${daggerVersion}",
+//            daggerCompiler : "com.google.dagger:dagger-compiler:${daggerVersion}",
+//            daggerAndroidSupportCompiler : "com.google.dagger:dagger-android-processor:${daggerVersion}",
+//            lifecycleRuntime : "android.arch.lifecycle:runtime:${lifecycleVersion}",
+//            lifecycleExtensions : "android.arch.lifecycle:extensions:${lifecycleVersion}",
+//            lifecycleCompiler : "android.arch.lifecycle:compiler:${lifecycleVersion}",
+//            lifecycleJava8 : "android.arch.lifecycle:common-java8:${lifecycleVersion}",
+//            paging : "android.arch.paging:runtime:${pagingVersion}",
+//            autoplayvideos : "com.allattentionhere:autoplayvideos:${autoplayvideosVersion}",
+//            easyvideoplayer : "com.afollestad:easyvideoplayer:${easyvideoplayerVersion}"
+    ]
+
+}
