@@ -20,6 +20,7 @@ import com.muthu.salesmanager.model.Product
 import com.muthu.salesmanager.ui.fragment.MyCartFragment
 import com.muthu.salesmanager.ui.fragment.OrderListFragment
 import com.muthu.salesmanager.ui.fragment.ProductListFragment
+import com.muthu.salesmanager.util.PermissionUtil
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import java.util.HashMap
@@ -119,6 +120,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
 
             R.id.nav_my_cart -> {
+
+                PermissionUtil.hasExternalStoragePermission(this, 100)
 
                 fragment = MyCartFragment()
 

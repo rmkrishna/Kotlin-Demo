@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        style="@style/Title_Style"
+        android:text="Add new area" />
+
+    <EditText
+        android:id="@+id/inventory__add_new_category_et__category"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:hint="Enter new area name"
+        android:inputType="textCapSentences" />
+
+    <Button
+        android:id="@+id/inventory__add_new_category_btn__save"
+        style="@style/Button_Style.Color"
+        android:layout_gravity="right"
+        android:layout_marginTop="16dp"
+        android:text="Save"
+        android:theme="@style/MButton.Color" />
+
+</LinearLayout>

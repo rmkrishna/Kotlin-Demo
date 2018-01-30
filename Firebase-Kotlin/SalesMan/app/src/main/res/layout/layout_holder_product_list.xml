@@ -18,19 +18,29 @@
         android:background="@color/card_bg"
         android:padding="8dp">
 
+        <ImageView
+            android:id="@+id/icon"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:scaleType="centerCrop"
+            android:background="@drawable/bulb1" />
+
         <TextView
             android:id="@+id/product_title"
             style="@style/Title_Style"
+            android:layout_toRightOf="@+id/icon"
+            android:paddingLeft="8dp"
             android:layout_width="wrap_content"
-            android:padding="0dp"
             tools:text="Title" />
 
         <TextView
             android:id="@+id/price_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/product_title"
             android:layout_below="@+id/product_title"
             android:text="Rs."
+            android:paddingLeft="8dp"
             android:textColor="#AAAAAA" />
 
         <TextView
@@ -50,7 +60,7 @@
             android:layout_below="@+id/product_title"
             android:layout_toRightOf="@+id/price_value"
             android:paddingLeft="10dp"
-            android:text="AvailableCount ("
+            android:text="InStock ("
             android:textColor="#AAAAAA" />
 
         <TextView

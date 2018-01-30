@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/bg"
+    android:id="@+id/printView"
     android:orientation="vertical">
 
     <TextView
@@ -24,9 +25,9 @@
         android:gravity="left"
         android:padding="8dp"
         android:text="Cart items"
-        android:textStyle="bold"
         android:textColor="@color/title_text_color"
-        android:textSize="14sp" />
+        android:textSize="14sp"
+        android:textStyle="bold" />
 
     <LinearLayout
         android:id="@+id/payment_product_list"
@@ -36,6 +37,30 @@
         android:orientation="vertical">
 
     </LinearLayout>
+
+    <ImageView style="@style/Dot_Line_Style" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="Total"
+            android:textColor="#888888" />
+
+        <TextView
+            android:id="@+id/total_price_final"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:text="Total"
+            android:textColor="@color/title_text_color"
+            android:textSize="18sp" />
+    </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -62,9 +87,9 @@
             android:gravity="left"
             android:padding="8dp"
             android:text="adasd"
-            android:textStyle="normal"
             android:textColor="@color/title_text_color"
-            android:textSize="12sp" />
+            android:textSize="12sp"
+            android:textStyle="normal" />
 
     </LinearLayout>
 

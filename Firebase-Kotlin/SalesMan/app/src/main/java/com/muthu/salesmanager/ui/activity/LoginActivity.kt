@@ -19,6 +19,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.muthu.salesmanager.R
 import com.muthu.salesmanager.model.User
+import com.muthu.salesmanager.util.PermissionUtil
 
 
 class LoginActivity : BaseActivity(), View.OnClickListener {
@@ -53,6 +54,8 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
         mAuth = FirebaseAuth.getInstance()
 
         findViewById<SignInButton>(R.id.sign_in_button).setOnClickListener(this)
+
+        PermissionUtil.hasExternalStoragePermission(this, 100)
     }
 
     override fun onStart() {

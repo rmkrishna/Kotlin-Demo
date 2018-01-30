@@ -1,35 +1,47 @@
 package com.muthu.salesmanager.ui.fragment
 
+import android.app.Activity.RESULT_OK
 import android.app.ProgressDialog
 import android.content.Context
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
-import android.widget.LinearLayout
-import android.widget.TextView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.muthu.salesmanager.R
-import com.muthu.salesmanager.model.Order
-import com.muthu.salesmanager.model.Product
-import com.muthu.salesmanager.ui.adapter.MyCartListAdapter
 import kotlinx.android.synthetic.main.fragment_my_cart.*
 import kotlinx.android.synthetic.main.layout_address_detail.*
-import kotlinx.android.synthetic.main.layout_address_detail.view.*
 import kotlinx.android.synthetic.main.layout_payment.*
-import android.text.format.DateFormat.getLongDateFormat
-import java.text.DateFormat
+import android.widget.*
+import com.muthu.salesmanager.util.ext.alert
 import java.text.SimpleDateFormat
 import java.util.*
+import android.support.v4.app.ShareCompat.IntentBuilder
+import com.google.android.gms.location.places.ui.PlacePicker
+import android.widget.Toast
+import com.google.android.gms.location.places.Place
+import android.content.Intent
+import android.graphics.Rect
+import com.muthu.salesmanager.R.id.place
+import android.location.Geocoder
+import com.muthu.salesmanager.model.*
+import java.io.IOException
+import kotlin.collections.ArrayList
+import android.graphics.pdf.PdfDocument.PageInfo
+import android.graphics.pdf.PdfDocument
+import android.net.Uri
+import android.os.Environment
+import android.support.v4.content.FileProvider
+import com.muthu.salesmanager.util.PermissionUtil
+import java.io.File
+import java.io.FileOutputStream
 
 
-class MyCartFragment : Fragment() {
+class MyCartFragment : Fragment(), AdapterView.OnItemSelectedListener {
+
 
     interface OnMyCartActionListener {
         fun onPaymentSuccess()
@@ -50,6 +62,10 @@ class MyCartFragment : Fragment() {
     private var totalItemCount: Int = 0
 
     var mListener: OnMyCartActionListener? = null;
+
+    var cities: ArrayList<City> = ArrayList();
+    var areas: ArrayList<Area> = ArrayList();
+    var shops: ArrayList<Shop> = ArrayList();
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
@@ -102,13 +118,13 @@ class MyCartFragment : Fragment() {
                     showAlert("Enter address")
                     return@setOnClickListener
                 }
-                if (pincode.editableText.isEmpty()) {
-                    showAlert("Enter pincode")
-                    return@setOnClickListener
-                }
             } else if (step == 2) {
                 doPayment()
                 return@setOnClickListener
+            } else if (step == 0) {
+                if (products.isEmpty()) {
+                    return@setOnClickListener
+                }
             }
 
             step += 1
@@ -132,7 +148,325 @@ class MyCartFragment : Fragment() {
             }
         }
 
+        addCity.setOnClickListener {
+            addNewCity()
+        }
+
+        addArea.setOnClickListener {
+
+            //            val builder = PlacePicker.IntentBuilder()
+//
+//            startActivityForResult(builder.build(activity), PLACE_PICKER_REQUEST)
+
+            addNewArea()
+        }
+
+        addShop.setOnClickListener {
+            addNewShop()
+        }
+
         updateViews()
+
+        getCities()
+    }
+
+    val PLACE_PICKER_REQUEST = 1
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == PLACE_PICKER_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                val place = PlacePicker.getPlace(activity, data)
+
+                addressAlertEditText?.let {
+                    it.setText(place.address)
+                }
+            }
+        }
+    }
+
+    private fun getCities() {
+
+        val myTopPostsQuery = mDatabase?.child("cities")
+
+        myTopPostsQuery?.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                cities.clear()
+
+                var cityNames: ArrayList<String> = ArrayList()
+
+                for (child in dataSnapshot.children) {
+                    val map = child.getValue() as HashMap<String, Any>
+
+                    var city: City = City.getMap(map)
+
+                    city?.let {
+
+                        cities.add(city)
+                        cityNames.add(city.cityName);
+                    }
+                }
+
+                activity?.let {
+                    it.runOnUiThread {
+                        setSpinnerAdapter(city, cityNames)
+                    }
+                }
+
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+            }
+        })
+    }
+
+    private fun getAreas() {
+
+        println("Get areas")
+
+        if (cities.isEmpty()) {
+
+            address.setText("")
+            mobileNumber.setText("")
+            shopName.setText("")
+            return
+        }
+
+        val myTopPostsQuery = mDatabase?.child("cities")?.child(cities[city.selectedItemPosition].cityId)?.child("areas")
+
+        myTopPostsQuery?.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                areas.clear()
+
+                var areaNames: ArrayList<String> = ArrayList()
+
+                for (child in dataSnapshot.children) {
+                    val map = child.getValue() as HashMap<String, Any>
+
+                    var area: Area = Area.getMap(map)
+
+                    area?.let {
+
+                        areas.add(area)
+                        areaNames.add(area.areaName);
+                    }
+                }
+
+                activity?.let {
+                    it.runOnUiThread {
+                        setSpinnerAdapter(area, areaNames)
+                    }
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+            }
+        })
+    }
+
+    private fun getShops() {
+
+        println("getShops")
+
+        if (cities.isEmpty() || areas.isEmpty()) {
+            address.setText("")
+            mobileNumber.setText("")
+            shopName.setText("")
+            return
+        }
+
+        val myTopPostsQuery = mDatabase?.child("cities")?.child(cities[city.selectedItemPosition].cityId)?.child("areas")?.child(areas[area.selectedItemPosition].areaId)?.child("shops")
+
+        myTopPostsQuery?.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                shops.clear()
+
+                var shopNames: ArrayList<String> = ArrayList()
+
+                for (child in dataSnapshot.children) {
+                    val map = child.getValue() as HashMap<String, Any>
+
+                    var shop: Shop = Shop.getMap(map)
+
+                    shop?.let {
+
+                        shops.add(shop)
+                        shopNames.add(shop.shopName);
+                    }
+                }
+
+                activity?.let {
+                    it.runOnUiThread {
+
+                        if (shops.isEmpty()) {
+                            address.setText("")
+                            mobileNumber.setText("")
+                            shopName.setText("")
+                        }
+                        setSpinnerAdapter(shop, shopNames)
+                    }
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+            }
+        })
+    }
+
+    override fun onNothingSelected(parent: AdapterView<*>?) {
+
+    }
+
+    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+        when (parent?.id) {
+            R.id.city -> {
+                getAreas()
+            }
+            R.id.area -> {
+                getShops()
+            }
+            R.id.shop -> {
+                var shopItem = shops[shop.selectedItemPosition]
+
+                shopItem?.let {
+                    address.setText(shopItem.address)
+                    mobileNumber.setText(shopItem.mobileNumber)
+                    shopName.setText(shopItem.shopName)
+                }
+            }
+        }
+    }
+
+    private fun setSpinnerAdapter(spinner: Spinner?, items: ArrayList<String>) {
+        spinner?.let {
+            it.adapter = ArrayAdapter(activity, R.layout.support_simple_spinner_dropdown_item, items)
+
+            it.onItemSelectedListener = this
+        }
+    }
+
+    private fun addNewCity() {
+        activity?.alert {
+            var view: View = customView(R.layout.layout_add_new_city)
+
+            var saveBtn: Button = view.findViewById(R.id.inventory__add_new_category_btn__save)
+            var categoryName: EditText = view.findViewById(R.id.inventory__add_new_category_et__category)
+
+            saveBtn.setOnClickListener {
+
+                if (categoryName.editableText.isEmpty()) {
+                    return@setOnClickListener
+                }
+
+                val value: String = categoryName.editableText.toString()
+
+                for (city in cities) {
+                    if (value.equals(city.cityName, true)) {
+                        break
+                        return@setOnClickListener
+                    }
+                }
+
+
+                val key = mDatabase?.child("cities")?.push()?.key
+
+                var city: City = City(value, key!!)
+
+                mDatabase?.child("cities")?.child(key)?.setValue(city)
+
+                dismiss()
+            }
+
+            show()
+        }
+    }
+
+    private fun addNewArea() {
+
+        if (cities.isEmpty()) {
+            showAlert("Please add or select city")
+
+            return
+        }
+
+        activity?.alert {
+            var view: View = customView(R.layout.layout_add_new_area)
+
+            var saveBtn: Button = view.findViewById(R.id.inventory__add_new_category_btn__save)
+            var categoryName: EditText = view.findViewById(R.id.inventory__add_new_category_et__category)
+
+            saveBtn.setOnClickListener {
+
+                if (categoryName.editableText.isEmpty()) {
+                    return@setOnClickListener
+                }
+
+                val value: String = categoryName.editableText.toString()
+
+                for (area in areas) {
+                    if (value.equals(area.areaName, true)) {
+                        break
+                        return@setOnClickListener
+                    }
+                }
+
+
+                val key = mDatabase?.child("cities")?.child(cities[city.selectedItemPosition].cityId)?.child("areas")?.push()?.key
+
+                var area: Area = Area(value, key!!)
+
+                mDatabase?.child("cities")?.child(cities[city.selectedItemPosition].cityId)?.child("areas")?.child(key)?.setValue(area)
+
+                dismiss()
+            }
+
+            show()
+        }
+    }
+
+    var addressAlertEditText: EditText? = null;
+
+    private fun addNewShop() {
+        activity?.alert {
+            var view: View = customView(R.layout.layout_add_new_shop)
+
+            var saveBtn: Button = view.findViewById(R.id.inventory__add_new_category_btn__save)
+            var addAddress: ImageButton = view.findViewById(R.id.addAddress)
+
+            var shopName: EditText = view.findViewById(R.id.shopName)
+            var mobileNumber: EditText = view.findViewById(R.id.mobileNumber)
+            addressAlertEditText = view.findViewById(R.id.address)
+
+            addAddress.setOnClickListener {
+                val builder = PlacePicker.IntentBuilder()
+
+                startActivityForResult(builder.build(activity), PLACE_PICKER_REQUEST)
+            }
+
+            saveBtn.setOnClickListener {
+
+                if (shopName.editableText.isEmpty()) {
+                    showAlert("Enter shop name")
+                    return@setOnClickListener
+                }
+
+                if (mobileNumber.editableText.isEmpty()) {
+                    showAlert("Enter mobile number")
+                    return@setOnClickListener
+                }
+
+                val key = mDatabase?.child("shops")?.push()?.key
+
+                var shop: Shop = Shop(key!!, shopName.editableText.toString(), mobileNumber.editableText.toString(), addressAlertEditText?.editableText.toString())
+
+                mDatabase?.child("shops")?.child(key)?.setValue(shop)
+
+                mDatabase?.child("cities")?.child(cities[city.selectedItemPosition].cityId)?.child("areas")?.child(areas[area.selectedItemPosition].areaId)?.child("shops")?.child(key)?.setValue(shop)
+
+                dismiss()
+            }
+
+            show()
+        }
     }
 
     private fun doPayment() {
@@ -147,7 +481,7 @@ class MyCartFragment : Fragment() {
         order.shopName = shopName.editableText.toString()
         order.products.addAll(products)
         order.address = address.editableText.toString()
-        order.pincode = address.editableText.toString()
+//        order.pincode = address.editableText.toString()
         order.phone = mobileNumber.editableText.toString()
         order.totalAmount = totalPrice?.text.toString()
         order.totalProduct = totalItemCount
@@ -203,10 +537,81 @@ class MyCartFragment : Fragment() {
             })
         }
 
+        if (PermissionUtil.hasExternalStoragePermission(activity)) {
+            printPayment()
+        } else {
+            mListener?.let {
+                it.onPaymentSuccess()
+            }
+        }
+
+//        hideProgressDialog()
+    }
+
+    private fun printPayment() {
+        val document = PdfDocument()
+
+        // repaint the user's text into the page
+        val content = printView
+
+        // crate a page description
+        val pageNumber = 1
+        val pageInfo = PageInfo.Builder(content.getWidth(),
+                content.getHeight() - 20, pageNumber).create()
+
+        // create a new page from the PageInfo
+        val page = document.startPage(pageInfo)
+
+        content.draw(page.canvas)
+
+//        val bounds = Rect()
+//        content.getDrawingRect(bounds)
+//
+//        val bounds1 = Rect()
+//        content.getHitRect(bounds1)
+//
+//        println("bounds right" + bounds.right + " bottom " + bounds.bottom + " left " + bounds.left)
+//        println("getHitRect right" + bounds1.right + " bottom " + bounds1.bottom + " left " + bounds1.left)
+
+        // do final processing of the page
+        document.finishPage(page)
+
+        val sdf = SimpleDateFormat("ddMMyyyyhhmmss")
+
+        val pdfName = ("pdfdemo"
+                + sdf.format(Calendar.getInstance().time) + ".pdf")
+
+        val outputFile = File(Environment.getExternalStorageDirectory().getPath(), pdfName)
+
+        try {
+            outputFile.createNewFile()
+            val out = FileOutputStream(outputFile)
+            document.writeTo(out)
+            document.close()
+            out.close()
+
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+
         mListener?.let {
             it.onPaymentSuccess()
         }
-//        hideProgressDialog()
+
+        var target = Intent(Intent.ACTION_VIEW)
+
+        var apkURI: Uri = FileProvider.getUriForFile(
+                activity!!,
+                context?.getApplicationContext()?.getPackageName() + ".provider", outputFile);
+        target.setDataAndType(apkURI, "application/pdf");
+        target.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+//        target.setDataAndType(Uri.fromFile(outputFile), "application/pdf");
+//        target.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+
+        var intent = Intent.createChooser(target, "Open File");
+
+        startActivity(intent)
     }
 
     var mProgressDialog: ProgressDialog? = null
@@ -230,13 +635,12 @@ class MyCartFragment : Fragment() {
     private fun updateItems() {
         step = 0;
 
-
-
         listItemsView?.removeAllViews()
 
         var usetId: String = mAuth?.currentUser?.uid!!
 
-        val inflater = LayoutInflater.from(activity)
+        // TODO Need to change this
+        val inflater = LayoutInflater.from(activity!!)
 
         var priceTotalValue: Float = 0.0f
 
@@ -275,6 +679,7 @@ class MyCartFragment : Fragment() {
         addressLayout.visibility = View.GONE
         listItemsView?.visibility = View.VISIBLE
         paymentLayout.visibility = View.GONE
+        total_layout.visibility = View.VISIBLE
 
     }
 
@@ -284,6 +689,7 @@ class MyCartFragment : Fragment() {
         addressLayout.visibility = View.VISIBLE
         listItemsView?.visibility = View.GONE
         paymentLayout.visibility = View.GONE
+        total_layout.visibility = View.VISIBLE
     }
 
     fun updatePayment() {
@@ -332,13 +738,15 @@ class MyCartFragment : Fragment() {
 
         paymentDetailAddress.setText(shopName.editableText.toString() + " \n " +
                 address.editableText.toString() + " \n " +
-                pincode.editableText.toString() + " \n " +
                 mobileNumber.editableText.toString() + " \n "
         )
+
+        total_price_final.setText("Rs." + priceTotalValue)
 
         addressLayout.visibility = View.GONE
         listItemsView?.visibility = View.GONE
         paymentLayout.visibility = View.VISIBLE
+        total_layout.visibility = View.GONE
     }
 
     private fun updateViews() {

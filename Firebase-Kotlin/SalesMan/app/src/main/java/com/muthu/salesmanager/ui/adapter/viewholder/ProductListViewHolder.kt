@@ -19,6 +19,7 @@ class ProductListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) 
     var removeBtn: ImageButton
     var totlCount: TextView
     var priceValue: TextView
+    var icon: ImageView
 
     init {
         titleView = itemView.findViewById(R.id.product_title)
@@ -27,6 +28,7 @@ class ProductListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) 
         plusBtn = itemView.findViewById(R.id.add)
         removeBtn = itemView.findViewById(R.id.remove)
         priceValue = itemView.findViewById(R.id.price_value)
+        icon = itemView.findViewById(R.id.icon)
     }
 
     fun bindToPost(product: Product, plusClickListener: View.OnClickListener, minusClickListener: View.OnClickListener, usetId: String) {
@@ -36,6 +38,19 @@ class ProductListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) 
         totlCount.setText("" + product.availableCount)
 
         plusBtn.isEnabled = true
+
+        println("product type " + product.brandType)
+
+        if ("bulb".contains(product.brandType!!.toLowerCase(), true)) {
+            if ("sony".contains(product.productType!!.toLowerCase(), true)) {
+                icon.setBackgroundResource(R.drawable.bulb1)
+            } else {
+                icon.setBackgroundResource(R.drawable.bulb2)
+            }
+        } else {
+            icon.setBackgroundResource(R.drawable.tube1)
+        }
+
 
         priceValue.setText("" + product.price)
 

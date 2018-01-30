@@ -37,6 +37,9 @@ dependencies {
     implementation supportDependencies.appCompat
     implementation supportDependencies.design
     implementation supportDependencies.constraint
+    implementation supportDependencies.map
+    implementation supportDependencies.location
+    implementation supportDependencies.places
     implementation supportDependencies.cardView
     implementation 'com.google.firebase:firebase-messaging:11.8.0'
     implementation 'com.google.firebase:firebase-auth:11.8.0'
