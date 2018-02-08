@@ -2,19 +2,21 @@ package com.muthu.salesmanager.ui.activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.TextUtils
 import android.util.Log
 import android.view.View
+import android.widget.Button
+import android.widget.EditText
+import android.widget.Toast
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
-import com.google.firebase.auth.AuthCredential
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.*
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.muthu.salesmanager.R
@@ -36,6 +38,9 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
 
     private var mGoogleSignInClient: GoogleSignInClient? = null
 
+    private var mEmailField: EditText? = null;
+    private var mPasswordField: EditText? = null;
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -53,7 +58,12 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
 
         mAuth = FirebaseAuth.getInstance()
 
+        mEmailField = findViewById(R.id.field_email);
+        mPasswordField = findViewById(R.id.field_password);
+
         findViewById<SignInButton>(R.id.sign_in_button).setOnClickListener(this)
+        findViewById<Button>(R.id.email_sign_in_button).setOnClickListener(this)
+        findViewById<Button>(R.id.email_create_account_button).setOnClickListener(this)
 
         PermissionUtil.hasExternalStoragePermission(this, 100)
     }
@@ -94,6 +104,7 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
         showProgressDialog()
 
         var authCredential: AuthCredential = GoogleAuthProvider.getCredential(acct.idToken, null);
+
         mAuth!!.signInWithCredential(authCredential).addOnCompleteListener(this) {
             if (it.isSuccessful) {
                 updateSignIn(mAuth?.currentUser)
@@ -108,17 +119,70 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
         super.onStop()
     }
 
-    fun signIn() {
+    private fun signIn() {
         var signInIntent = mGoogleSignInClient?.signInIntent
 
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
+    private fun emailSignIn(email: String, password: String) {
+        println("emailSignIn " + email + " password " + password)
+
+        if (!validateForm(email, password)) {
+            return
+        }
+
+        showProgressDialog()
+
+        mAuth!!.signInWithEmailAndPassword(email, password).addOnCompleteListener(this) { task ->
+            if (task.isSuccessful) {
+                Log.d(TAG, "signInWithEmail:success")
+
+                updateSignIn(mAuth?.currentUser)
+            } else {
+                Log.w(TAG, "signInWithEmail:failure", task.exception)
+                Toast.makeText(this@LoginActivity, "Authentication failed.",
+                        Toast.LENGTH_SHORT).show()
+                updateSignIn(null)
+            }
+
+            hideProgressDialog()
+        }
+
+    }
+
+    private fun emailSignUp(email: String, password: String) {
+        println("emailSignUp " + email)
+
+        if (!validateForm(email, password)) {
+            return
+        }
+
+        showProgressDialog()
+
+        mAuth!!.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this) { task ->
+            if (task.isSuccessful) {
+                Log.d(TAG, "createUserWithEmail:success")
+
+                updateSignIn(mAuth?.currentUser)
+            } else {
+                Log.w(TAG, "createUserWithEmail:failure", task.exception)
+                Toast.makeText(this@LoginActivity, "Authentication failed.",
+                        Toast.LENGTH_SHORT).show()
+                updateSignIn(null)
+            }
+
+            hideProgressDialog()
+        }
+    }
+
     override fun onClick(v: View?) {
         var id = v?.id;
 
-        if (id == R.id.sign_in_button) {
-            signIn()
+        when (id) {
+            R.id.sign_in_button -> signIn()
+            R.id.email_sign_in_button -> emailSignIn(mEmailField?.text.toString(), mPasswordField?.text.toString())
+            R.id.email_create_account_button -> emailSignUp(mEmailField?.text.toString(), mPasswordField?.text.toString())
         }
     }
 
@@ -128,8 +192,12 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
         user?.let {
 
             var email: String = it.email as String;
-            var name: String = it.displayName as String;
 
+            var name: String? = it.displayName;
+
+            if (name == null) {
+                name = email
+            }
 
             var user: User = User(name, email, 1);
 
@@ -139,5 +207,25 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
 
             finish()
         }
+    }
+
+    private fun validateForm(email: String, password: String): Boolean {
+        var valid = true
+
+        if (TextUtils.isEmpty(email)) {
+            mEmailField?.setError("Required.")
+            valid = false
+        } else {
+            mEmailField?.setError(null)
+        }
+
+        if (TextUtils.isEmpty(password)) {
+            mPasswordField?.setError("Required.")
+            valid = false
+        } else {
+            mPasswordField?.setError(null)
+        }
+
+        return valid
     }
 }

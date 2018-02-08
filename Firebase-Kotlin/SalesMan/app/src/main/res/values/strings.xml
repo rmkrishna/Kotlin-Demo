@@ -2,6 +2,10 @@
     <string name="app_name">SalesManager</string>
 
     <string name="loading">Loading</string>
+    <string name="hint_email">Email</string>
+    <string name="hint_password">Password</string>
+    <string name="sign_in">Sign In</string>
+    <string name="create_account">Create Account</string>
 
     <string-array name="bulb_type">
         <item>Bug Light</item>
