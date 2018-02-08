@@ -95,8 +95,6 @@ class ProductListAdapter(options: FirebaseRecyclerOptions<Product>, var userId: 
 
                 return Transaction.success(mutableData)
             }
-
         })
     }
-
 }

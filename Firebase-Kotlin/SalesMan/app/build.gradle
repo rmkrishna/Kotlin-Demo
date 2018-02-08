@@ -28,32 +28,30 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-    implementation 'com.android.support:appcompat-v7:26.1.0'
 
-    implementation 'com.android.support:support-v4:27.0.2'
-    compile 'com.android.support:multidex:1.0.2'
+//    implementation 'com.android.support:support-v4:27.0.2'
 
     // Android support libs
+    implementation supportDependencies.multiDex
+
     implementation supportDependencies.appCompat
     implementation supportDependencies.design
     implementation supportDependencies.constraint
+
     implementation supportDependencies.map
     implementation supportDependencies.location
     implementation supportDependencies.places
+
     implementation supportDependencies.cardView
-    implementation 'com.google.firebase:firebase-messaging:11.8.0'
-    implementation 'com.google.firebase:firebase-auth:11.8.0'
-    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
-    implementation 'com.google.android.gms:play-services-auth:11.8.0'
-    implementation 'com.firebaseui:firebase-ui-auth:3.2.1'
-    implementation 'com.google.firebase:firebase-database:11.8.0'
-    implementation 'com.firebaseui:firebase-ui-database:3.2.1'
+
+    implementation supportDependencies.firebaseMessage
+    implementation supportDependencies.firebaseAuth
+    implementation supportDependencies.firebaseDatabase
+
+    implementation supportDependencies.firebaseUiAuth
+    implementation supportDependencies.firebaseUiDB
+
+    implementation supportDependencies.playServiceAuth
 }
-
-
-
-
-
-
 
 apply plugin: 'com.google.gms.google-services'
