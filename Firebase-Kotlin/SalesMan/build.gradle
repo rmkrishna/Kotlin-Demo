@@ -30,7 +30,7 @@ task clean(type: Delete) {
 ext {
     // sdk and tools
     versions = [
-            versionCode      : 2,
+            versionCode      : 3,
             versionName      : "0.1-debug",
             compileSdkVersion: 27,
             targetSdkVersion : 27,
